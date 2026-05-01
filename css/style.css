@@ -407,10 +407,11 @@ body {
 
 .comic-source {
     margin-top: 15px;
-    font-size: 14px;
+    font-size: 18px; /* Increased slightly for Londrina readability */
     color: #ffffff;
     opacity: 0.8;
-    font-style: italic;
+    font-family: 'Londrina Solid', sans-serif;
+    font-weight: 100;
 }
 
 
