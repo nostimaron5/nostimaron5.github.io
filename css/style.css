@@ -408,7 +408,7 @@ body {
 .comic-source {
     margin-top: 15px;
     font-size: 14px;
-    color: #ffdf42;
+    color: #ffffff;
     opacity: 0.8;
     font-style: italic;
 }
@@ -496,7 +496,7 @@ body {
     max-width: 100%;
     height: auto;
     width: 600px;
-    filter: drop-shadow(4px 4px 0px #000);
+    /* Shadow removed for better readability as requested */
     animation: breathe 5s ease-in-out infinite;
 }
 
@@ -545,13 +545,13 @@ body {
     }
 
     100% {
-        transform: translateX(calc(-50% - 7.5px));
+        transform: translateX(-50%);
     }
 }
 
 @keyframes scrollRight {
     0% {
-        transform: translateX(calc(-50% - 7.5px));
+        transform: translateX(-50%);
     }
 
     100% {
@@ -627,7 +627,7 @@ body {
     max-width: 100%;
     height: auto;
     width: 750px;
-    filter: drop-shadow(2px 2px 0px #000);
+    /* Shadow removed for better readability as requested */
     animation: floating-more 4s ease-in-out infinite;
 }
 

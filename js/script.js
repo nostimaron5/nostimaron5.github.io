@@ -1,64 +1,72 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log('This is fine. Loaded.');
 
-    // Optional: Pause marquee on hover for better readability
+    // Cache elements
     const marquee = document.querySelector('.marquee-content');
-    if (marquee) {
-        marquee.addEventListener('mouseenter', () => {
-            marquee.style.animationPlayState = 'paused';
-        });
-        marquee.addEventListener('mouseleave', () => {
-            marquee.style.animationPlayState = 'running';
-        });
-    }
-    // Auto-duplicate carousel images to prevent black gaps on large screens
     const tracks = document.querySelectorAll('.carousel-track');
+    const comic = document.querySelector('.comic-img');
+    const menuToggle = document.getElementById('mobile-menu');
+    const navLinks = document.querySelector('.nav-links');
+    const animatedElements = document.querySelectorAll('.title-img, .lore-card, .comic-img');
+
+    // Pause marquee on hover
+    if (marquee) {
+        marquee.addEventListener('mouseenter', () => marquee.style.animationPlayState = 'paused');
+        marquee.addEventListener('mouseleave', () => marquee.style.animationPlayState = 'running');
+    }
+
+    // Auto-duplicate carousel images for seamless loop
+    // HTML already contains 2 sets, repeating once more (total 4) ensures no gaps on ultra-wide screens
     tracks.forEach(track => {
-        track.innerHTML = track.innerHTML.repeat(4);
+        if (track.children.length > 0) {
+            track.innerHTML = track.innerHTML.repeat(2);
+        }
     });
 
-    // Scroll-triggered animations
+    // Scroll-triggered animations (One-shot for a cleaner feel)
     const observerOptions = {
-        threshold: 0.2 // Trigger when 20% of the element is visible
+        threshold: 0.1
     };
 
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('animate');
-            } else {
-                // Se oculta de nuevo cuando sale de la pantalla
-                entry.target.classList.remove('animate');
+                observer.unobserve(entry.target); // Trigger only once
             }
         });
     }, observerOptions);
 
-    const animatedElements = document.querySelectorAll('.title-img, .lore-card, .comic-img');
     animatedElements.forEach(el => observer.observe(el));
 
-    // Smooth rotation for comic image on scroll
+    // Optimized scroll rotation for comic image
+    let isTicking = false;
     window.addEventListener('scroll', () => {
-        const comic = document.querySelector('.comic-img');
-        if (comic && comic.classList.contains('animate')) {
-            const rect = comic.getBoundingClientRect();
-            const viewHeight = window.innerHeight;
-            // Calculate rotation (-5 to 5 degrees) based on screen position
-            const rotation = (rect.top - viewHeight / 2) * 0.015;
-            comic.style.transform = `rotate(${rotation}deg)`;
+        if (!comic || !comic.classList.contains('animate')) return;
+
+        if (!isTicking) {
+            window.requestAnimationFrame(() => {
+                const rect = comic.getBoundingClientRect();
+                const viewHeight = window.innerHeight;
+                
+                // Only calculate if visible
+                if (rect.top < viewHeight && rect.bottom > 0) {
+                    const rotation = (rect.top - viewHeight / 2) * 0.015;
+                    comic.style.transform = `rotate(${rotation}deg)`;
+                }
+                isTicking = false;
+            });
+            isTicking = true;
         }
-    });
+    }, { passive: true });
 
     // Mobile Menu Toggle Logic
-    const menuToggle = document.getElementById('mobile-menu');
-    const navLinks = document.querySelector('.nav-links');
-
     if (menuToggle && navLinks) {
         menuToggle.addEventListener('click', () => {
             menuToggle.classList.toggle('active');
             navLinks.classList.toggle('active');
         });
 
-        // Close menu when a link is clicked (useful for anchor links)
         const links = navLinks.querySelectorAll('a');
         links.forEach(link => {
             link.addEventListener('click', () => {
